@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.example.leandropayments.Constants
 import java.text.DecimalFormatSymbols
 
-class DecimalEditTextComponent: AppCompatEditText {
+class DecimalEditText: AppCompatEditText {
         /**
          * Constructor
          *

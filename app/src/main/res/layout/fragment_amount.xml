@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/etv_amount"/>
 
-    <com.example.leandropayments.components.DecimalEditTextComponent
+    <com.example.leandropayments.components.DecimalEditText
         android:id="@+id/etv_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
