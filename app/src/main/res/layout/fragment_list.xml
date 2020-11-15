@@ -31,14 +31,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:cardElevation="8dp"
             app:cardCornerRadius="8dp"
-            app:cardUseCompatPadding="true"
-            app:cardBackgroundColor="#ccc">
+            app:cardUseCompatPadding="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@drawable/main_gradient_background">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_list"

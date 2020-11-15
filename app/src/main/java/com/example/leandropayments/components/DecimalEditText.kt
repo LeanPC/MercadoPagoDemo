@@ -18,7 +18,7 @@ class DecimalEditText: AppCompatEditText {
          * @param context
          * The context for the component
          */
-        constructor(context: Context?) : super(context) {
+        constructor(context: Context?) : super(context!!) {
             setup(
                 Constants.MAX_AMOUNT_FIELD_CHARS,
                 Constants.AMOUNT_FIELD_DECIMAL_DIGITS
@@ -33,7 +33,7 @@ class DecimalEditText: AppCompatEditText {
          * @param attrs
          * The attribute set
          */
-        constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+        constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs) {
             setup(
                 Constants.MAX_AMOUNT_FIELD_CHARS,
                 Constants.AMOUNT_FIELD_DECIMAL_DIGITS
@@ -53,7 +53,7 @@ class DecimalEditText: AppCompatEditText {
         constructor(
             context: Context?, attrs: AttributeSet?,
             defStyle: Int
-        ) : super(context, attrs, defStyle) {
+        ) : super(context!!, attrs, defStyle) {
             setup(
                 Constants.MAX_AMOUNT_FIELD_CHARS,
                 Constants.AMOUNT_FIELD_DECIMAL_DIGITS

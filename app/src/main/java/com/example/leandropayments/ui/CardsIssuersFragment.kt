@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class CardsIssuersFragment: Fragment(), CoroutineScope, OnClickItem<CardIssuer>{
+class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope, OnClickItem<CardIssuer>{
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -37,11 +37,15 @@ class CardsIssuersFragment: Fragment(), CoroutineScope, OnClickItem<CardIssuer>{
         /**
          * @return A new instance of fragment MethodsPaymentsFragment.
          */
-        fun newInstance() = PaymentsMethodsFragment()
+        fun newInstance(paymentMethodId: String) = CardsIssuersFragment(paymentMethodId)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if(savedInstanceState != null && savedInstanceState.containsKey("paymentMethodId")){
+            paymentMethodId = savedInstanceState.getString("paymentMethodId")
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -63,7 +67,7 @@ class CardsIssuersFragment: Fragment(), CoroutineScope, OnClickItem<CardIssuer>{
 
         tv_title.text = resources.getString(R.string.tv_title_cards)
         recycler_list.layoutManager = LinearLayoutManager(context, LinearLayout.HORIZONTAL, false)
-        adapter = CardsIssuersRecyclerAdatper(listItems.toMutableList(), dataPasser as Context)
+        adapter = CardsIssuersRecyclerAdatper(listItems.toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
 
         initObserver()

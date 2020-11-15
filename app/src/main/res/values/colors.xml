@@ -4,4 +4,9 @@
     <color name="colorPrimaryDark">#036642</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="color_50percent_transparent">#80434A58</color>
+    <color name="color_gradient_background_start">#D5DBDB</color>
+    <color name="color_gradient_background_center">#FFFFFF</color>
+    <color name="color_gradient_background_end">#D5DBDB</color>
+
+
 </resources>

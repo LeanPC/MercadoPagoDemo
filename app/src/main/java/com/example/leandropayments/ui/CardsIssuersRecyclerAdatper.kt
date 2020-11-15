@@ -13,10 +13,9 @@ import com.squareup.picasso.Picasso
 
 class CardsIssuersRecyclerAdatper(
     private var data: MutableList<CardIssuer>,
-    private val context: Context?
+    private val context: Context?,
+    private val listener: OnClickItem<CardIssuer>
 ): RecyclerView.Adapter<CardsIssuersRecyclerAdatper.ViewHolder>() {
-
-    private lateinit var currentItem: CardIssuer
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(
@@ -28,17 +27,8 @@ class CardsIssuersRecyclerAdatper(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item: CardIssuer = data.get(position)
-
-        Picasso.with(context)
-            .load(item.secure_thumbnail)
-            //Se implementara a futuro transformaciones
-            //.transform(CircleTransform(0, 0))
-            .centerInside()
-            .fit()
-            .into(holder.imageCardIssuer)
-
-        holder.descriptionCardIssuer.text = item.name
+        val item: CardIssuer = data[position]
+        holder.initialize(item, context, listener)
     }
 
     override fun getItemCount(): Int {
@@ -54,9 +44,9 @@ class CardsIssuersRecyclerAdatper(
         val imageCardIssuer = itemView.findViewById<ImageView>(R.id.image_item)
         val descriptionCardIssuer = itemView.findViewById<TextView>(R.id.tv_description)
 
-        fun initialize(item: CardIssuer, position: Int, context: Context?){
+        fun initialize(item: CardIssuer, context: Context?, listener: OnClickItem<CardIssuer>){
             itemView.setOnClickListener(View.OnClickListener {
-                (context as OnClickItem<CardIssuer>).onClickItemSelected(item)
+                listener.onClickItemSelected(item)
             })
 
             Picasso.with(context)

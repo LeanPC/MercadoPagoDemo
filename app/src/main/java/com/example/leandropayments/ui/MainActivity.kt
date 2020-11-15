@@ -3,6 +3,7 @@ package com.example.leandropayments.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.Fragment
 import com.example.leandropayments.R
 import com.example.leandropayments.data.model.CardIssuer
 import com.example.leandropayments.data.model.PaymentMethod
@@ -21,7 +22,7 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
 
         if (savedInstanceState == null) {
             initTextsStates()
-            loadAmountScreen()
+            loadScreenAmount()
         }
     }
 
@@ -32,43 +33,62 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
         tv_state_installments.visibility = View.GONE
     }
 
-    private fun loadAmountScreen() {
+    private fun loadScreenAmount() {
+        val frg = AmountFragment.newInstance()
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, AmountFragment.newInstance(), "")
+            .add(R.id.fragment_container, AmountFragment.newInstance(), frg::class.java.name)
             .commit()
     }
 
-    override fun loadScreenMethodsPayment(amount: Double) {
+    override fun loadScreenPaymentMethods(amount: Double, fragment: Fragment) {
         tv_state_methods_payments.visibility = View.VISIBLE
         amountValid = amount
+
+        val frg = PaymentsMethodsFragment.newInstance()
+        frg.retainInstance = true
+
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, PaymentsMethodsFragment.newInstance(), "")
-            .addToBackStack(null)
+            .replace(R.id.fragment_container, PaymentsMethodsFragment.newInstance(), frg::class.java.name)
+            //Remember Previous fragment
+            .addToBackStack(fragment::class.java.name)
             .commit()
     }
 
-    override fun loadScreenCards(item: PaymentMethod) {
+    override fun loadScreenCards(item: PaymentMethod, fragment: Fragment) {
         paymentMethodSelected = item
+        val bundle = Bundle()
+        bundle.putString("paymentMethodId", paymentMethodSelected.id)
         tv_state_cards.visibility = View.VISIBLE
+
+        val frg = CardsIssuersFragment.newInstance(paymentMethodSelected.id)
+        frg.retainInstance = true
+        frg.arguments = bundle
+
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CardsIssuersFragment.newInstance(), "")
-            .addToBackStack(null)
+            .replace(R.id.fragment_container, frg, "")
+            //Remember Previous fragment
+            .addToBackStack(fragment::class.java.name)
             .commit()
     }
 
-    override fun loadScreenInstallments(item: CardIssuer) {
+    override fun loadScreenInstallments(item: CardIssuer, fragment: Fragment) {
         cardIssuerSelected = item
         tv_state_installments.visibility = View.VISIBLE
+
+        val frg = PaymentsMethodsFragment.newInstance()
+        frg.retainInstance = true
+
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, PaymentsMethodsFragment.newInstance(), "")
-            .addToBackStack(null)
+            .replace(R.id.fragment_container, PaymentsMethodsFragment.newInstance(), frg::class.java.name)
+            //Remember Previous fragment
+            .addToBackStack(fragment::class.java.name)
             .commit()
     }
 
     override fun loadScreenSuccess() {
         initTextsStates()
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, PaymentsMethodsFragment.newInstance(), "")
+            .add(R.id.fragment_container, PaymentsMethodsFragment.newInstance(), "")
             .addToBackStack(null)
             .commit()
     }

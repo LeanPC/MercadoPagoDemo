@@ -11,10 +11,11 @@ import com.example.leandropayments.R
 import com.example.leandropayments.data.model.PaymentMethod
 import com.squareup.picasso.Picasso
 
-class PaymentsMethodsRecyclerAdatper(
+class PaymentsMethodsRecyclerAdapter(
     private var data: MutableList<PaymentMethod>,
-    private val context: Context?
-): RecyclerView.Adapter<PaymentsMethodsRecyclerAdatper.ViewHolder>(){
+    private val context: Context?,
+    private val listener: OnClickItem<PaymentMethod>
+): RecyclerView.Adapter<PaymentsMethodsRecyclerAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(
@@ -27,7 +28,7 @@ class PaymentsMethodsRecyclerAdatper(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item: PaymentMethod = data[position]
-        holder.initialize(item, context)
+        holder.initialize(item, context, listener)
     }
 
     override fun getItemCount(): Int {
@@ -46,9 +47,9 @@ class PaymentsMethodsRecyclerAdatper(
         init {
             adapterPosition
         }
-        fun initialize(item: PaymentMethod, context: Context?){
+        fun initialize(item: PaymentMethod, context: Context?, listener: OnClickItem<PaymentMethod>){
             itemView.setOnClickListener(View.OnClickListener {
-                (context as OnClickItem<PaymentMethod>).onClickItemSelected(item)
+                listener.onClickItemSelected(item)
             })
 
             Picasso.with(context)

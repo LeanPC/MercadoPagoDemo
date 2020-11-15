@@ -44,7 +44,7 @@ class AmountFragment(): Fragment(){
             if(etv_amount. text.toString() != "") {
                 amount = etv_amount.text.toString().toDouble()
                 if (Utils.isValidAmount(amount)) {
-                    dataPasser?.loadScreenMethodsPayment(amount)
+                    dataPasser?.loadScreenPaymentMethods(amount, this)
                 } else {
                     dataPasser?.showErrorToast(resources.getString(R.string.amount_invalid_error))
                 }

@@ -53,11 +53,13 @@ open class BaseActivity: AppCompatActivity(), CoroutineScope {
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && savedInstanceState.containsKey("progressbarIsShowing")) {
             progressBarIsShowing = savedInstanceState.getBoolean("progressbarIsShowing")
-            showProgressIndicator()
-        } else {
-            hideProgressIndicator()
+            if(progressBarIsShowing){
+                showProgressIndicator()
+            } else {
+                hideProgressIndicator()
+            }
         }
     }
 }

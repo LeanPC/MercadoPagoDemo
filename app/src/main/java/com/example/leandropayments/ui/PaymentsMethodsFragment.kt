@@ -25,7 +25,7 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
         get() = Dispatchers.Main + job
 
     private lateinit var job: Job
-    private lateinit var adapter: PaymentsMethodsRecyclerAdatper
+    private lateinit var adapter: PaymentsMethodsRecyclerAdapter
     private lateinit var paymentMethodSelected: PaymentMethod
     private lateinit var paymentsMethodsViewModel: PaymentsMethodsViewModel
     private var dataPasser: SuccessErrorOperation? = null
@@ -57,10 +57,10 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
 
         tv_title.text = resources.getString(R.string.tv_title_methods_payments)
         recycler_list.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
-        adapter = PaymentsMethodsRecyclerAdatper(listItems.toMutableList(), dataPasser as Context)
+        adapter = PaymentsMethodsRecyclerAdapter(listItems.toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
         btn_continue.setOnClickListener(View.OnClickListener {
-            dataPasser?.loadScreenCards(paymentMethodSelected)
+            dataPasser?.loadScreenCards(paymentMethodSelected, this)
         })
 
         initObserver()
@@ -87,12 +87,12 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
             val success = withContext(Dispatchers.IO){
                 paymentsMethodsViewModel.getListMethodsPayments()
             }
-
+            dataPasser?.hideProgressIndicator()
 //            if(success.isEmpty){
 //                dataPasser?.showErrorToast(resources.getString(R.string.service_error))
 //            }
-            dataPasser?.hideProgressIndicator()
         }
+       // dataPasser?.hideProgressIndicator()
         //dataPasser?.hideProgressIndicator()
 
     }
