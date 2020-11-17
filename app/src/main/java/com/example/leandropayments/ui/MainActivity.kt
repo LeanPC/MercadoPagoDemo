@@ -11,7 +11,7 @@ import com.example.leandropayments.data.model.PaymentMethod
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 
-class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope, FragmentManager.OnBackStackChangedListener {
+class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
 
     private var amountValid: Double = 0.0
     private lateinit var paymentMethodSelected: PaymentMethod
@@ -33,7 +33,7 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope, Frag
 
         val frg = AmountFragment.newInstance()
         frg.retainInstance = true
-        currentFragment = frg::class.java.name
+        currentFragment = "amountFragment"
 
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, frg, currentFragment)
@@ -46,11 +46,10 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope, Frag
 
         val frg = PaymentsMethodsFragment.newInstance()
         frg.retainInstance = true
-        currentFragment = frg::class.java.name
+        currentFragment = "paymentMethodFragment"
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, frg, currentFragment)
-            //Remember Previous fragment
             .addToBackStack(currentFragment)
             .commit()
     }
@@ -65,25 +64,25 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope, Frag
         val frg = CardsIssuersFragment.newInstance(paymentMethodSelected.id)
         frg.retainInstance = true
         frg.arguments = bundle
+        currentFragment = "cardsFragment"
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, frg, "")
-            //Remember Previous fragment
-            .addToBackStack(fragment::class.java.name)
+            .replace(R.id.fragment_container, frg, currentFragment)
+            .addToBackStack(currentFragment)
             .commit()
     }
 
     override fun loadScreenInstallments(item: CardIssuer, fragment: Fragment) {
         img_step4.setImageResource(R.drawable.ic_step_operation_image_complete)
         cardIssuerSelected = item
+        currentFragment = "installmentsFragment"
 
         val frg = InstallmentsFragment.newInstance()
         frg.retainInstance = true
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, frg, frg::class.java.name)
-            //Remember Previous fragment
-            .addToBackStack(fragment::class.java.name)
+            .replace(R.id.fragment_container, frg, currentFragment)
+            .addToBackStack(currentFragment)
             .commit()
     }
 
@@ -92,9 +91,13 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope, Frag
         //se inicializa la pantalla de monto para que al volver este listo de nuevo de lo contrario se deberia manejar en el back de fragments
         payerCostSelected = item
         initStepsImg()
+
+        currentFragment = "amountFragment"
+        supportFragmentManager.popBackStack(currentFragment, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, PaymentsMethodsFragment.newInstance(), "")
-            .addToBackStack(null)
+            .add(R.id.fragment_container, AmountFragment.newInstance(), currentFragment)
+            .addToBackStack(currentFragment)
             .commit()
     }
 
@@ -105,20 +108,27 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope, Frag
         img_step4.setImageResource(R.drawable.ic_step_operation_image)
     }
 
-    override fun onBackStackChanged() {
-        //var frg: Fragment? = supportFragmentManager.findFragmentByTag(currentFragment)
+    override fun onBackPressed() {
         var index = supportFragmentManager.backStackEntryCount - 1
-        var backEntry: FragmentManager.BackStackEntry = supportFragmentManager.getBackStackEntryAt(
-            index);
-        val tag = backEntry.name
+        var backEntry: FragmentManager.BackStackEntry = supportFragmentManager.getBackStackEntryAt(index);
+        val tag: String = backEntry.name.toString()
 
-        if(tag == PaymentsMethodsFragment.newInstance()::class.simpleName){
-            var test = "probando"
+        if(tag?.compareTo("paymentMethodFragment") == 0){
+            img_step2.setImageResource(R.drawable.ic_step_operation_image)
+            currentFragment = "amountFragment"
+            //if(paymentMethodSelected != null) paymentMethodSelected == null
+
+        } else if(tag?.compareTo("cardsFragment") == 0){
+            img_step3.setImageResource(R.drawable.ic_step_operation_image)
+            currentFragment = "paymentMethodFragment"
+            //if(cardIssuerSelected != null) cardIssuerSelected == null
+
+        } else if(tag?.compareTo("installmentsFragment") == 0){
+            img_step4.setImageResource(R.drawable.ic_step_operation_image)
+            currentFragment = "cardsFragment"
+            //if(payerCostSelected != null) payerCostSelected == null
         }
-//        else if(tag ==) {
-//
-//        } else if(tag ==){
-//
-//        }
+
+        super.onBackPressed()
     }
 }

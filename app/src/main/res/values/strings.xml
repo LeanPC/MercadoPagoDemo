@@ -13,4 +13,7 @@
     <string name="installment">Cuotas</string>
     <string name="rate">Tasa</string>
     <string name="cft_tea_description">CFT_TEA</string>
+    <string name="error_validate_payment_method">Debe seleccionar al menos una opcion</string>
+    <string name="error_validate_cards">Debe seleccionar una tarjeta</string>
+    <string name="error_validate_installments">Debe seleccionar una cuota</string>
 </resources>

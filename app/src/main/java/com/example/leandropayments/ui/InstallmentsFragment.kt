@@ -32,7 +32,7 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
     private var paymentMethodId = ""
     private var issuerId = ""
     private var dataPasser: SuccessErrorOperation? = null
-    private lateinit var itemSelected: PayerCost
+    private lateinit var payerCostSelected: PayerCost
 
     companion object {
         /**
@@ -63,7 +63,11 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
         adapter = InstallmentsRecyclerAdapter(emptyList<PayerCost>().toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
         btn_continue.setOnClickListener(View.OnClickListener {
-            dataPasser?.loadScreenSuccess(itemSelected, this)
+            if(payerCostSelected != null) {
+                dataPasser?.loadScreenSuccess(payerCostSelected, this)
+            } else {
+                dataPasser?.showErrorToast(resources.getString(R.string.error_validate_installments))
+            }
         })
 
         initObserver()
@@ -77,6 +81,7 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
         val installmentObserver = Observer<List<Installment>> {
             //Siempre llega un item
             loadItem(it[0])
+            dataPasser?.hideProgressIndicator()
         }
         installmentsViewModel.getListInstallmentsLiveData().observe(viewLifecycleOwner, installmentObserver)
     }
@@ -91,14 +96,7 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
             val success = withContext(Dispatchers.IO){
                 installmentsViewModel.getListInstallments(amount.toString(), paymentMethodId, issuerId)
             }
-            dataPasser?.hideProgressIndicator()
-//            if(success.isEmpty){
-//                dataPasser?.showErrorToast(resources.getString(R.string.service_error))
-//            }
         }
-        // dataPasser?.hideProgressIndicator()
-        //dataPasser?.hideProgressIndicator()
-
     }
 
     override fun onDetach() {
@@ -107,6 +105,6 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
     }
 
     override fun onClickItemSelected(item: PayerCost) {
-        itemSelected = item
+        payerCostSelected = item
     }
 }

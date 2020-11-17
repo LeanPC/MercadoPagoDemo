@@ -70,7 +70,12 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
         adapter = CardsIssuersRecyclerAdatper(listItems.toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
         btn_continue.setOnClickListener(View.OnClickListener {
-            dataPasser?.loadScreenInstallments(cardIssuerSelected, this)
+            if(cardIssuerSelected != null) {
+                dataPasser?.loadScreenInstallments(cardIssuerSelected, this)
+                dataPasser?.hideProgressIndicator()
+            } else {
+                dataPasser?.showErrorToast(resources.getString(R.string.error_validate_cards))
+            }
         })
 
         initObserver()
@@ -83,6 +88,7 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
             CardsIssuersViewModel::class.java)
         val cardIssuerObserver = Observer<List<CardIssuer>> {
             loadListItems(it)
+            dataPasser?.hideProgressIndicator()
         }
         cardsIssuersViewModel.getListCardsIssuersLiveData().observe(viewLifecycleOwner, cardIssuerObserver)
     }
@@ -97,14 +103,7 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
             val success = withContext(Dispatchers.IO){
                 cardsIssuersViewModel.getListCardsIssuers(paymentMethodId)
             }
-
-//            if(success.isEmpty){
-//                dataPasser?.showErrorToast(resources.getString(R.string.service_error))
-//            }
-            dataPasser?.hideProgressIndicator()
         }
-        //dataPasser?.hideProgressIndicator()
-
     }
 
     override fun onDetach() {

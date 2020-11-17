@@ -60,7 +60,12 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
         adapter = PaymentsMethodsRecyclerAdapter(listItems.toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
         btn_continue.setOnClickListener(View.OnClickListener {
-            dataPasser?.loadScreenCards(paymentMethodSelected, this)
+            if(paymentMethodSelected != null) {
+                dataPasser?.loadScreenCards(paymentMethodSelected, this)
+                dataPasser?.hideProgressIndicator()
+            } else {
+                dataPasser?.showErrorToast(resources.getString(R.string.error_validate_payment_method))
+            }
         })
 
         initObserver()
@@ -72,6 +77,7 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
         paymentsMethodsViewModel = ViewModelProviders.of(this, ViewModelFactory()).get(PaymentsMethodsViewModel::class.java)
         val methodPaymentObserver = Observer<List<PaymentMethod>> {
             loadListItems(it)
+            dataPasser?.hideProgressIndicator()
         }
         paymentsMethodsViewModel.getListMethodsPaymentsLiveData().observe(viewLifecycleOwner, methodPaymentObserver)
     }
@@ -87,14 +93,7 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
             val success = withContext(Dispatchers.IO){
                 paymentsMethodsViewModel.getListMethodsPayments()
             }
-            dataPasser?.hideProgressIndicator()
-//            if(success.isEmpty){
-//                dataPasser?.showErrorToast(resources.getString(R.string.service_error))
-//            }
         }
-       // dataPasser?.hideProgressIndicator()
-        //dataPasser?.hideProgressIndicator()
-
     }
 
     override fun onDetach() {
