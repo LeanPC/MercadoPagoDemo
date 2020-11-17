@@ -12,7 +12,7 @@ class PaymentsMethodsViewModel(private val paymentUseCase: PaymentUseCase): View
 
     private val listData = MutableLiveData<List<PaymentMethod>>()
 
-    fun setListData(listPaymentMethods:List<PaymentMethod>){
+    fun setListData(listPaymentMethods: List<PaymentMethod>){
         listData.value = listPaymentMethods
     }
 

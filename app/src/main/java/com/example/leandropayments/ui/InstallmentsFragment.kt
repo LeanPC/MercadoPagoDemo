@@ -8,44 +8,37 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.leandropayments.R
-import com.example.leandropayments.data.model.CardIssuer
-import com.example.leandropayments.viewmodel.CardsIssuersViewModel
+import com.example.leandropayments.data.model.Installment
+import com.example.leandropayments.data.model.PayerCost
+import com.example.leandropayments.viewmodel.InstallmentsViewModel
 import com.example.leandropayments.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope, OnClickItem<CardIssuer>{
+class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>{
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
     private lateinit var job: Job
-    private lateinit var adapter: CardsIssuersRecyclerAdatper
-    private var listItems: List<CardIssuer> = emptyList()
-    private lateinit var cardIssuerSelected: CardIssuer
+    private lateinit var adapter: InstallmentsRecyclerAdapter
+    private lateinit var installmentsViewModel: InstallmentsViewModel
+    private var amount: Double = 0.0
     private var paymentMethodId = ""
-    private lateinit var cardsIssuersViewModel: CardsIssuersViewModel
-    var dataPasser: SuccessErrorOperation? = null
+    private var issuerId = ""
+    private var dataPasser: SuccessErrorOperation? = null
+    private lateinit var itemSelected: PayerCost
 
     companion object {
         /**
          * @return A new instance of fragment MethodsPaymentsFragment.
          */
-        fun newInstance(paymentMethodId: String) = CardsIssuersFragment(paymentMethodId)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if(savedInstanceState != null && savedInstanceState.containsKey("paymentMethodId")){
-            paymentMethodId = savedInstanceState.getString("paymentMethodId")
-        }
+        fun newInstance() = InstallmentsFragment()
     }
 
     override fun onAttach(context: Context) {
@@ -65,44 +58,45 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tv_title.text = resources.getString(R.string.tv_title_cards)
-        recycler_list.layoutManager = LinearLayoutManager(context, LinearLayout.HORIZONTAL, false)
-        adapter = CardsIssuersRecyclerAdatper(listItems.toMutableList(), dataPasser as Context, this)
+        tv_title.text = resources.getString(R.string.tv_title_installments)
+        recycler_list.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        adapter = InstallmentsRecyclerAdapter(emptyList<PayerCost>().toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
         btn_continue.setOnClickListener(View.OnClickListener {
-            dataPasser?.loadScreenInstallments(cardIssuerSelected, this)
+            dataPasser?.loadScreenSuccess(itemSelected, this)
         })
 
         initObserver()
-        getCardsIssuers()
+        geInstallments()
     }
 
     private fun initObserver() {
 
-        cardsIssuersViewModel = ViewModelProviders.of(this, ViewModelFactory()).get(
-            CardsIssuersViewModel::class.java)
-        val cardIssuerObserver = Observer<List<CardIssuer>> {
-            loadListItems(it)
+        installmentsViewModel = ViewModelProviders.of(this, ViewModelFactory()).get(
+            InstallmentsViewModel::class.java)
+        val installmentObserver = Observer<List<Installment>> {
+            //Siempre llega un item
+            loadItem(it[0])
         }
-        cardsIssuersViewModel.getListCardsIssuersLiveData().observe(viewLifecycleOwner, cardIssuerObserver)
+        installmentsViewModel.getListInstallmentsLiveData().observe(viewLifecycleOwner, installmentObserver)
     }
 
-    fun loadListItems(items: List<CardIssuer>) {
-        adapter.update(items.toMutableList())
+    fun loadItem(item: Installment) {
+        adapter.update(items = item.payer_costs.toMutableList())
     }
 
-    private fun getCardsIssuers() {
+    private fun geInstallments() {
         dataPasser?.showProgressIndicator()
         launch {
             val success = withContext(Dispatchers.IO){
-                cardsIssuersViewModel.getListCardsIssuers(paymentMethodId)
+                installmentsViewModel.getListInstallments(amount.toString(), paymentMethodId, issuerId)
             }
-
+            dataPasser?.hideProgressIndicator()
 //            if(success.isEmpty){
 //                dataPasser?.showErrorToast(resources.getString(R.string.service_error))
 //            }
-            dataPasser?.hideProgressIndicator()
         }
+        // dataPasser?.hideProgressIndicator()
         //dataPasser?.hideProgressIndicator()
 
     }
@@ -112,7 +106,7 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
         super.onDetach()
     }
 
-    override fun onClickItemSelected(item: CardIssuer) {
-        cardIssuerSelected = item
+    override fun onClickItemSelected(item: PayerCost) {
+        itemSelected = item
     }
 }

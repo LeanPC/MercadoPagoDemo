@@ -17,6 +17,7 @@ open class BaseInteractorApiMP<T : Any?>(): Callback<List<T>> {
     val mpApiClient: ApiServicesMP
 
     init {
+// Por si llega a usar un token..........
 
 //        val client = OkHttpClient.Builder().addInterceptor(object : Interceptor {
 //            @Throws(IOException::class)

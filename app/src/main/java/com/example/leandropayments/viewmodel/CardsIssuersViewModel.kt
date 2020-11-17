@@ -13,7 +13,7 @@ class CardsIssuersViewModel(private val cardIssuerUseCase: CardIssuerCase): View
 
     private val listData = MutableLiveData<List<CardIssuer>>()
 
-    fun setListData(listCardsIssuers:List<CardIssuer>){
+    fun setListData(listCardsIssuers: List<CardIssuer>){
         listData.value = listCardsIssuers
     }
 

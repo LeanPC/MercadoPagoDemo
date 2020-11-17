@@ -1,8 +1,6 @@
 package com.example.leandropayments.data.networking
 
 import com.example.leandropayments.data.model.PaymentMethod
-import com.example.leandropayments.data.networking.BaseInteractorApiMP
-import com.example.leandropayments.data.networking.ResponseListener
 import retrofit2.Call
 import retrofit2.Response
 

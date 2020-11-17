@@ -3,13 +3,14 @@
     <string name="amount_invalid_error">Ingrese un monto mayor a 0</string>
     <string name="amount_null_error">Ingrese un monto</string>
     <string name="continue_operation">Continuar</string>
-    <string name="step1_operation">Ingreso de Importe</string>
-    <string name="step2_operation">Metodo de Pago</string>
-    <string name="step3_operation">Tarjeta</string>
-    <string name="step4_operation">Cuotas</string>
     <string name="tv_title_import">INGRESE IMPORTE</string>
-    <string name="tv_title_methods_payments">SELECCIONE METODO DE PAGO</string>
-    <string name="tv_title_cards">SELECCIONE TARJETA DE PAGO</string>
-    <string name="tv_title_installments">SELECCIONE UNA CUOTA DE PAGO</string>
+    <string name="tv_title_methods_payments">SELECCIONE MEDIO DE PAGO</string>
+    <string name="tv_title_cards">SELECCIONE UNA TARJETA</string>
+    <string name="tv_title_installments">SELECCIONE UNA CUOTA</string>
     <string name="service_error">Lo sentimos a ocurrido un error</string>
+    <string name="number_credit">XXXX - XXXX - XXXX - XXXX</string>
+    <string name="field_description">description</string>
+    <string name="installment">Cuotas</string>
+    <string name="rate">Tasa</string>
+    <string name="cft_tea_description">CFT_TEA</string>
 </resources>

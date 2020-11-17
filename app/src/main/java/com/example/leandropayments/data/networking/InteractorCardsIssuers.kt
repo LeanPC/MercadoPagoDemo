@@ -1,15 +1,14 @@
 package com.example.leandropayments.data.networking
 
 import com.example.leandropayments.data.model.CardIssuer
-import com.example.leandropayments.data.networking.BaseInteractorApiMP
-import com.example.leandropayments.data.networking.ResponseListener
 import retrofit2.Call
 import retrofit2.Response
 
 class InteractorCardsIssuers(private val listener: ResponseListener<CardIssuer>): BaseInteractorApiMP<CardIssuer>() {
 
     fun execute(methodId: String){
-        mpApiClient.searchCardsByKey(key, methodId).enqueue(this)
+        //mpApiClient.searchCardsByKey(key, methodId).enqueue(this)
+        mpApiClient.searchCardsByKey(key, "visa").enqueue(this)
     }
 
     override fun onResponse(call: Call<List<CardIssuer>>, response: Response<List<CardIssuer>>) {

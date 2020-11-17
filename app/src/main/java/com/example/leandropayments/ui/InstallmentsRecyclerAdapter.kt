@@ -8,18 +8,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.leandropayments.R
-import com.example.leandropayments.data.model.CardIssuer
-import com.squareup.picasso.Picasso
+import com.example.leandropayments.data.model.PayerCost
 
-class CardsIssuersRecyclerAdatper(
-    private var data: MutableList<CardIssuer>,
+class InstallmentsRecyclerAdapter(
+    private var data: MutableList<PayerCost>,
     private val context: Context?,
-    private val listener: OnClickItem<CardIssuer>
-): RecyclerView.Adapter<CardsIssuersRecyclerAdatper.ViewHolder>() {
+    private val listener: OnClickItem<PayerCost>
+): RecyclerView.Adapter<InstallmentsRecyclerAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(
-            R.layout.cards_issuer_cardview,
+            R.layout.item_installment_view,
             parent,
             false
         )
@@ -27,7 +26,7 @@ class CardsIssuersRecyclerAdatper(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item: CardIssuer = data[position]
+        val item: PayerCost = data[position]
         holder.initialize(item, context, listener)
     }
 
@@ -35,32 +34,29 @@ class CardsIssuersRecyclerAdatper(
         return data.size
     }
 
-    fun update(items: MutableList<CardIssuer>){
+    fun update(items: MutableList<PayerCost>){
         data = items
         notifyDataSetChanged()
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageCardIssuer = itemView.findViewById<ImageView>(R.id.image_item)
-        val descriptionCardIssuer = itemView.findViewById<TextView>(R.id.tv_description)
+        private val installment = itemView.findViewById<TextView>(R.id.tv_installment_value)!!
+        private val rate = itemView.findViewById<TextView>(R.id.tv_rate_value)!!
+        private val description = itemView.findViewById<TextView>(R.id.tv_description)!!
+        private val cfttea = itemView.findViewById<TextView>(R.id.tv_cft_tea)!!
 
         init {
             adapterPosition
         }
-        fun initialize(item: CardIssuer, context: Context?, listener: OnClickItem<CardIssuer>){
+        fun initialize(item: PayerCost, context: Context?, listener: OnClickItem<PayerCost>){
             itemView.setOnClickListener(View.OnClickListener {
                 listener.onClickItemSelected(item)
             })
 
-            Picasso.with(context)
-                .load(item.secure_thumbnail)
-                //Se implementara a futuro transformaciones
-                //.transform(CircleTransform(0, 0))
-                .centerInside()
-                .fit()
-                .into(imageCardIssuer)
-
-            descriptionCardIssuer.text = item.name
+            installment.text = item.installments.toString()
+            rate.text = item.installment_rate.toString() + "%"
+            description.text = item.recommended_message
+            cfttea.text =  item.labels[0]
         }
     }
 }

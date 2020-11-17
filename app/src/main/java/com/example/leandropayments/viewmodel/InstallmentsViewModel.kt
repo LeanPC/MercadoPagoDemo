@@ -12,7 +12,7 @@ class InstallmentsViewModel(private val installmentsUserCase: InstallmentsUseCas
     ResponseListener<Installment> {
     private val listData = MutableLiveData<List<Installment>>()
 
-    fun setListData(listCardsIssuers:List<Installment>){
+    fun setListData(listCardsIssuers: List<Installment>){
         listData.value = listCardsIssuers
     }
 
