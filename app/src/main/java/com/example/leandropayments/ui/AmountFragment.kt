@@ -5,16 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.example.leandropayments.R
 import com.example.leandropayments.utils.Utils
+import com.example.leandropayments.viewmodel.ViewModelFactory
+import com.example.leandropayments.viewmodel.ProcessPaymentViewModel
 import kotlinx.android.synthetic.main.fragment_amount.*
 
 class AmountFragment(): Fragment(){
 
-    var amount = 0.0
     var dataPasser: SuccessErrorOperation? = null
+    private lateinit var model: ProcessPaymentViewModel
 
     companion object {
         /**
@@ -41,11 +43,14 @@ class AmountFragment(): Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        model = ViewModelProviders.of(requireActivity(), ViewModelFactory()).get(ProcessPaymentViewModel::class.java)
         btn_continue.setOnClickListener(View.OnClickListener {
             if(etv_amount. text.toString() != "") {
-                amount = etv_amount.text.toString().toDouble()
-                if (Utils.isValidAmount(amount)) {
-                    dataPasser?.loadScreenPaymentMethods(amount, this)
+                val doubleAmount = etv_amount.text.toString().toDouble()
+
+                if (Utils.isValidAmount(doubleAmount)) {
+                    model.amountInput = etv_amount.text.toString()
+                    dataPasser?.loadScreenPaymentMethods()
                 } else {
                     dataPasser?.showErrorToast(resources.getString(R.string.amount_invalid_error))
                 }

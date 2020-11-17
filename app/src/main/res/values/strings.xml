@@ -9,11 +9,19 @@
     <string name="tv_title_installments">SELECCIONE UNA CUOTA</string>
     <string name="service_error">Lo sentimos a ocurrido un error</string>
     <string name="number_credit">XXXX - XXXX - XXXX - XXXX</string>
-    <string name="field_description">description</string>
+    <string name="field_description">Descripcion</string>
     <string name="installment">Cuotas</string>
     <string name="rate">Tasa</string>
     <string name="cft_tea_description">CFT_TEA</string>
     <string name="error_validate_payment_method">Debe seleccionar al menos una opcion</string>
     <string name="error_validate_cards">Debe seleccionar una tarjeta</string>
     <string name="error_validate_installments">Debe seleccionar una cuota</string>
+    <string name="field_total_amount">Monto Total:</string>
+    <string name="value_amount">0.00</string>
+    <string name="tv_title_voucher">OPERACION COMPLETADA</string>
+    <string name="field_payment">Proveedor Empresa:</string>
+    <string name="field_installment">Nro de Cuotas:</string>
+    <string name="field_rate">Tasa:</string>
+    <string name="btn_end">Finalizar</string>
+    <string name="hint_edit_amount">ingrese un monto</string>
 </resources>

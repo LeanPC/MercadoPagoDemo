@@ -50,6 +50,7 @@ class InstallmentsRecyclerAdapter(
         }
         fun initialize(item: PayerCost, context: Context?, listener: OnClickItem<PayerCost>){
             itemView.setOnClickListener(View.OnClickListener {
+                // TODO agregar un background color al seleccionar el item
                 listener.onClickItemSelected(item)
             })
 

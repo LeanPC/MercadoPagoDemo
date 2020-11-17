@@ -12,8 +12,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.leandropayments.R
 import com.example.leandropayments.data.model.PaymentMethod
-import com.example.leandropayments.viewmodel.PaymentsMethodsViewModel
 import com.example.leandropayments.viewmodel.ViewModelFactory
+import com.example.leandropayments.viewmodel.ProcessPaymentViewModel
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -26,10 +26,9 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
 
     private lateinit var job: Job
     private lateinit var adapter: PaymentsMethodsRecyclerAdapter
-    private lateinit var paymentMethodSelected: PaymentMethod
-    private lateinit var paymentsMethodsViewModel: PaymentsMethodsViewModel
     private var dataPasser: SuccessErrorOperation? = null
     private var listItems: List<PaymentMethod> = emptyList()
+    private lateinit var model: ProcessPaymentViewModel
 
     companion object {
         /**
@@ -60,9 +59,10 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
         adapter = PaymentsMethodsRecyclerAdapter(listItems.toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
         btn_continue.setOnClickListener(View.OnClickListener {
-            if(paymentMethodSelected != null) {
-                dataPasser?.loadScreenCards(paymentMethodSelected, this)
-                dataPasser?.hideProgressIndicator()
+
+            // TODO Analizar como resolver en kotlin elementos aun no seteados(crash cuando no se selecciona un item de la lista)
+            if(model.paymentMethodSelected != null) {
+                dataPasser?.loadScreenCards()
             } else {
                 dataPasser?.showErrorToast(resources.getString(R.string.error_validate_payment_method))
             }
@@ -74,12 +74,12 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
 
     private fun initObserver() {
 
-        paymentsMethodsViewModel = ViewModelProviders.of(this, ViewModelFactory()).get(PaymentsMethodsViewModel::class.java)
+        model = ViewModelProviders.of(requireActivity(), ViewModelFactory()).get(ProcessPaymentViewModel::class.java)
         val methodPaymentObserver = Observer<List<PaymentMethod>> {
             loadListItems(it)
             dataPasser?.hideProgressIndicator()
         }
-        paymentsMethodsViewModel.getListMethodsPaymentsLiveData().observe(viewLifecycleOwner, methodPaymentObserver)
+        model.getListMethodsPaymentsLiveData().observe(viewLifecycleOwner, methodPaymentObserver)
     }
 
     fun loadListItems(items: List<PaymentMethod>) {
@@ -91,7 +91,7 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
         dataPasser?.showProgressIndicator()
         launch {
             val success = withContext(Dispatchers.IO){
-                paymentsMethodsViewModel.getListMethodsPayments()
+                model.getListMethodsPayments()
             }
         }
     }
@@ -102,6 +102,6 @@ class PaymentsMethodsFragment(): Fragment(), CoroutineScope, OnClickItem<Payment
     }
 
     override fun onClickItemSelected(item: PaymentMethod) {
-        paymentMethodSelected = item
+        model.paymentMethodSelected = item
     }
 }

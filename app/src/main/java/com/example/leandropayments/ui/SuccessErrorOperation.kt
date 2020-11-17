@@ -7,10 +7,10 @@ import com.example.leandropayments.data.model.PayerCost
 import com.example.leandropayments.data.model.PaymentMethod
 
 interface SuccessErrorOperation {
-    fun loadScreenPaymentMethods(amount: Double, fragment: Fragment)
-    fun loadScreenCards(item: PaymentMethod, fragment: Fragment)
-    fun loadScreenInstallments(item: CardIssuer, fragment: Fragment)
-    fun loadScreenSuccess(item: PayerCost, fragment: Fragment)
+    fun loadScreenPaymentMethods()
+    fun loadScreenCards()
+    fun loadScreenInstallments()
+    fun loadScreenSuccess()
     fun showErrorToast(message: String)
     fun showProgressIndicator(): Boolean
     fun hideProgressIndicator(): Boolean

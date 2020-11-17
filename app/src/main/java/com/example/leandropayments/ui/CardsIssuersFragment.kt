@@ -8,19 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.leandropayments.R
 import com.example.leandropayments.data.model.CardIssuer
-import com.example.leandropayments.viewmodel.CardsIssuersViewModel
-import com.example.leandropayments.viewmodel.ViewModelFactory
+import com.example.leandropayments.viewmodel.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope, OnClickItem<CardIssuer>{
+class CardsIssuersFragment(): Fragment(), CoroutineScope, OnClickItem<CardIssuer>{
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -28,24 +26,18 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
     private lateinit var job: Job
     private lateinit var adapter: CardsIssuersRecyclerAdatper
     private var listItems: List<CardIssuer> = emptyList()
-    private lateinit var cardIssuerSelected: CardIssuer
-    private var paymentMethodId = ""
-    private lateinit var cardsIssuersViewModel: CardsIssuersViewModel
     var dataPasser: SuccessErrorOperation? = null
+    private lateinit var model: ProcessPaymentViewModel
 
     companion object {
         /**
-         * @return A new instance of fragment MethodsPaymentsFragment.
+         * @return A new instance of fragment CardsIssuersFragment.
          */
-        fun newInstance(paymentMethodId: String) = CardsIssuersFragment(paymentMethodId)
+        fun newInstance() = CardsIssuersFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if(savedInstanceState != null && savedInstanceState.containsKey("paymentMethodId")){
-            paymentMethodId = savedInstanceState.getString("paymentMethodId")
-        }
     }
 
     override fun onAttach(context: Context) {
@@ -70,8 +62,9 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
         adapter = CardsIssuersRecyclerAdatper(listItems.toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
         btn_continue.setOnClickListener(View.OnClickListener {
-            if(cardIssuerSelected != null) {
-                dataPasser?.loadScreenInstallments(cardIssuerSelected, this)
+            // TODO Analizar como resolver en kotlin elementos aun no seteados(crash cuando no se selecciona un item de la lista)
+            if(model.cardIssuerSelected != null) {
+                dataPasser?.loadScreenInstallments()
                 dataPasser?.hideProgressIndicator()
             } else {
                 dataPasser?.showErrorToast(resources.getString(R.string.error_validate_cards))
@@ -84,13 +77,12 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
 
     private fun initObserver() {
 
-        cardsIssuersViewModel = ViewModelProviders.of(this, ViewModelFactory()).get(
-            CardsIssuersViewModel::class.java)
+        model = ViewModelProviders.of(requireActivity(), ViewModelFactory()).get(ProcessPaymentViewModel::class.java)
         val cardIssuerObserver = Observer<List<CardIssuer>> {
             loadListItems(it)
             dataPasser?.hideProgressIndicator()
         }
-        cardsIssuersViewModel.getListCardsIssuersLiveData().observe(viewLifecycleOwner, cardIssuerObserver)
+        model.getListCardsIssuersLiveData().observe(viewLifecycleOwner, cardIssuerObserver)
     }
 
     fun loadListItems(items: List<CardIssuer>) {
@@ -101,7 +93,7 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
         dataPasser?.showProgressIndicator()
         launch {
             val success = withContext(Dispatchers.IO){
-                cardsIssuersViewModel.getListCardsIssuers(paymentMethodId)
+                model.getListCardsIssuers(model.paymentMethodSelected.id)
             }
         }
     }
@@ -112,6 +104,6 @@ class CardsIssuersFragment(paymentMethodId: String): Fragment(), CoroutineScope,
     }
 
     override fun onClickItemSelected(item: CardIssuer) {
-        cardIssuerSelected = item
+        model.cardIssuerSelected = item
     }
 }

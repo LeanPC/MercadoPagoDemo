@@ -1,29 +1,28 @@
 package com.example.leandropayments.ui
 
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProviders
 import com.example.leandropayments.R
-import com.example.leandropayments.data.model.CardIssuer
-import com.example.leandropayments.data.model.PayerCost
-import com.example.leandropayments.data.model.PaymentMethod
+import com.example.leandropayments.viewmodel.ProcessPaymentViewModel
+import com.example.leandropayments.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 
+
 class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
 
-    private var amountValid: Double = 0.0
-    private lateinit var paymentMethodSelected: PaymentMethod
-    private lateinit var cardIssuerSelected: CardIssuer
-    private lateinit var payerCostSelected: PayerCost
     private lateinit var currentFragment: String
+    private lateinit var model: ProcessPaymentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null) {
+            model = ViewModelProviders.of(this, ViewModelFactory()).get(ProcessPaymentViewModel::class.java)
             initStepsImg()
             loadScreenAmount()
         }
@@ -40,12 +39,10 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
             .commit()
     }
 
-    override fun loadScreenPaymentMethods(amount: Double, fragment: Fragment) {
+    override fun loadScreenPaymentMethods() {
         img_step2.setImageResource(R.drawable.ic_step_operation_image_complete)
-        amountValid = amount
 
         val frg = PaymentsMethodsFragment.newInstance()
-        frg.retainInstance = true
         currentFragment = "paymentMethodFragment"
 
         supportFragmentManager.beginTransaction()
@@ -54,16 +51,10 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
             .commit()
     }
 
-    override fun loadScreenCards(item: PaymentMethod, fragment: Fragment) {
+    override fun loadScreenCards() {
         img_step3.setImageResource(R.drawable.ic_step_operation_image_complete)
 
-        paymentMethodSelected = item
-        val bundle = Bundle()
-        bundle.putString("paymentMethodId", paymentMethodSelected.id)
-
-        val frg = CardsIssuersFragment.newInstance(paymentMethodSelected.id)
-        frg.retainInstance = true
-        frg.arguments = bundle
+        val frg = CardsIssuersFragment.newInstance()
         currentFragment = "cardsFragment"
 
         supportFragmentManager.beginTransaction()
@@ -72,9 +63,8 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
             .commit()
     }
 
-    override fun loadScreenInstallments(item: CardIssuer, fragment: Fragment) {
+    override fun loadScreenInstallments() {
         img_step4.setImageResource(R.drawable.ic_step_operation_image_complete)
-        cardIssuerSelected = item
         currentFragment = "installmentsFragment"
 
         val frg = InstallmentsFragment.newInstance()
@@ -86,19 +76,30 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
             .commit()
     }
 
-    override fun loadScreenSuccess(item: PayerCost, fragment: Fragment) {
+    override fun loadScreenSuccess() {
         //como no hay servicio de transaccion OK de la operacion
         //se inicializa la pantalla de monto para que al volver este listo de nuevo de lo contrario se deberia manejar en el back de fragments
-        payerCostSelected = item
         initStepsImg()
 
         currentFragment = "amountFragment"
-        supportFragmentManager.popBackStack(currentFragment, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        //Limpia el stack de fragments volviendo al root
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, AmountFragment.newInstance(), currentFragment)
             .addToBackStack(currentFragment)
             .commit()
+
+        //seguro que hay otra manera mejor de enviar datos como objetos parcelables o viewmodels (se mejorara en otra version)
+        val intent = Intent(baseContext, VoucherActivity::class.java)
+        intent.putExtra("AMOUNT", model.amountInput)
+        intent.putExtra("PAYMENT_METHOD_NAME", model.paymentMethodSelected.name)
+        intent.putExtra("IMG_CARD", model.cardIssuerSelected.secure_thumbnail)
+        intent.putExtra("INSTALLMENT", model.payerCostSelected.installments)
+        intent.putExtra("RATE", model.payerCostSelected.installment_rate)
+        intent.putExtra("DESCRIPTION", model.payerCostSelected.recommended_message)
+        startActivity(intent)
+
     }
 
     private fun initStepsImg() {
@@ -110,7 +111,8 @@ class MainActivity : BaseActivity(), SuccessErrorOperation, CoroutineScope {
 
     override fun onBackPressed() {
         var index = supportFragmentManager.backStackEntryCount - 1
-        var backEntry: FragmentManager.BackStackEntry = supportFragmentManager.getBackStackEntryAt(index);
+        var backEntry: FragmentManager.BackStackEntry = supportFragmentManager.getBackStackEntryAt(
+            index);
         val tag: String = backEntry.name.toString()
 
         if(tag?.compareTo("paymentMethodFragment") == 0){

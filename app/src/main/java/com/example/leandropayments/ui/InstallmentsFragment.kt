@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.leandropayments.R
 import com.example.leandropayments.data.model.Installment
 import com.example.leandropayments.data.model.PayerCost
-import com.example.leandropayments.viewmodel.InstallmentsViewModel
+import com.example.leandropayments.viewmodel.ProcessPaymentViewModel
 import com.example.leandropayments.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.coroutines.*
@@ -27,12 +27,8 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
 
     private lateinit var job: Job
     private lateinit var adapter: InstallmentsRecyclerAdapter
-    private lateinit var installmentsViewModel: InstallmentsViewModel
-    private var amount: Double = 0.0
-    private var paymentMethodId = ""
-    private var issuerId = ""
     private var dataPasser: SuccessErrorOperation? = null
-    private lateinit var payerCostSelected: PayerCost
+    private lateinit var model: ProcessPaymentViewModel
 
     companion object {
         /**
@@ -63,8 +59,9 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
         adapter = InstallmentsRecyclerAdapter(emptyList<PayerCost>().toMutableList(), dataPasser as Context, this)
         recycler_list.adapter = adapter
         btn_continue.setOnClickListener(View.OnClickListener {
-            if(payerCostSelected != null) {
-                dataPasser?.loadScreenSuccess(payerCostSelected, this)
+            // TODO Analizar como resolver en kotlin elementos aun no seteados(crash cuando no se selecciona un item de la lista)
+            if(model.payerCostSelected != null) {
+                dataPasser?.loadScreenSuccess()
             } else {
                 dataPasser?.showErrorToast(resources.getString(R.string.error_validate_installments))
             }
@@ -76,14 +73,13 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
 
     private fun initObserver() {
 
-        installmentsViewModel = ViewModelProviders.of(this, ViewModelFactory()).get(
-            InstallmentsViewModel::class.java)
+        model = ViewModelProviders.of(requireActivity(), ViewModelFactory()).get(ProcessPaymentViewModel::class.java)
         val installmentObserver = Observer<List<Installment>> {
             //Siempre llega un item
             loadItem(it[0])
             dataPasser?.hideProgressIndicator()
         }
-        installmentsViewModel.getListInstallmentsLiveData().observe(viewLifecycleOwner, installmentObserver)
+        model.getListInstallmentsLiveData().observe(viewLifecycleOwner, installmentObserver)
     }
 
     fun loadItem(item: Installment) {
@@ -94,7 +90,7 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
         dataPasser?.showProgressIndicator()
         launch {
             val success = withContext(Dispatchers.IO){
-                installmentsViewModel.getListInstallments(amount.toString(), paymentMethodId, issuerId)
+                model.getListInstallments(model.amountInput, model.paymentMethodSelected.id, model.cardIssuerSelected.id)
             }
         }
     }
@@ -105,6 +101,6 @@ class InstallmentsFragment(): Fragment(), CoroutineScope, OnClickItem<PayerCost>
     }
 
     override fun onClickItemSelected(item: PayerCost) {
-        payerCostSelected = item
+        model.payerCostSelected = item
     }
 }

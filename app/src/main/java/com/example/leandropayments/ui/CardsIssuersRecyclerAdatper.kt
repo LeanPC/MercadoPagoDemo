@@ -49,6 +49,7 @@ class CardsIssuersRecyclerAdatper(
         }
         fun initialize(item: CardIssuer, context: Context?, listener: OnClickItem<CardIssuer>){
             itemView.setOnClickListener(View.OnClickListener {
+                // TODO agregar un background color al seleccionar el item
                 listener.onClickItemSelected(item)
             })
 

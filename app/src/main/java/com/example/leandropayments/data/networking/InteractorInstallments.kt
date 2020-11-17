@@ -1,14 +1,14 @@
 package com.example.leandropayments.data.networking
 
 import com.example.leandropayments.data.model.Installment
+import com.example.leandropayments.viewmodel.ProcessPaymentViewModel
 import retrofit2.Call
 import retrofit2.Response
 
-class InteractorInstallments(private val listener: ResponseListener<Installment>): BaseInteractorApiMP<Installment>() {
+class InteractorInstallments(private val listener: ProcessPaymentViewModel): BaseInteractorApiMP<Installment>() {
 
     fun execute(amount: String, methodId: String, issuerId: String){
-        //mpApiClient.searchInstallmenstsByKey(key, amount, methodId, issuerId).enqueue(this)
-        mpApiClient.searchInstallmenstsByKey(key, "3000", "visa", "288").enqueue(this)
+        mpApiClient.searchInstallmenstsByKey(key, amount, methodId, issuerId).enqueue(this)
     }
 
     override fun onResponse(call: Call<List<Installment>>, response: Response<List<Installment>>) {
@@ -17,15 +17,15 @@ class InteractorInstallments(private val listener: ResponseListener<Installment>
             if (response.isSuccessful && response.body() != null) {
                 val installmentsDataModel = response.body()
                 if (installmentsDataModel != null) {
-                    listener.onResponse(installmentsDataModel)
+                    listener.setListDataInstallments(installmentsDataModel)
                 }
             }
         } catch (e: Exception) {
-            listener.onError(e)
+            //listener.onError(e)
         }
     }
 
     override fun onFailure(call: Call<List<Installment>>, t: Throwable) {
-        listener.onError(t)
+        //listener.onError(t)
     }
 }

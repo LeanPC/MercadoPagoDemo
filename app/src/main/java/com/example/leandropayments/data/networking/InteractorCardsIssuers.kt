@@ -1,14 +1,14 @@
 package com.example.leandropayments.data.networking
 
 import com.example.leandropayments.data.model.CardIssuer
+import com.example.leandropayments.viewmodel.ProcessPaymentViewModel
 import retrofit2.Call
 import retrofit2.Response
 
-class InteractorCardsIssuers(private val listener: ResponseListener<CardIssuer>): BaseInteractorApiMP<CardIssuer>() {
+class InteractorCardsIssuers(private val listener: ProcessPaymentViewModel): BaseInteractorApiMP<CardIssuer>() {
 
     fun execute(methodId: String){
-        //mpApiClient.searchCardsByKey(key, methodId).enqueue(this)
-        mpApiClient.searchCardsByKey(key, "visa").enqueue(this)
+        mpApiClient.searchCardsByKey(key, methodId).enqueue(this)
     }
 
     override fun onResponse(call: Call<List<CardIssuer>>, response: Response<List<CardIssuer>>) {
@@ -16,14 +16,14 @@ class InteractorCardsIssuers(private val listener: ResponseListener<CardIssuer>)
             // Example using Non-Null Asserted Call to catch the exception in case of being a null reference
             if (response.isSuccessful && response.body() != null) {
                 val cardsIssuersDataModel = response.body()?: emptyList()
-                listener.onResponse(cardsIssuersDataModel)
+                    listener.setListDataCardsIssuers(cardsIssuersDataModel)
             }
         } catch (e: Exception) {
-            listener.onError(e)
+            //listener.onError(e)
         }
     }
 
     override fun onFailure(call: Call<List<CardIssuer>>, t: Throwable) {
-        listener.onError(t)
+        //listener.onError(t)
     }
 }

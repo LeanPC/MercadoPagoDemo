@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/AppTheme">
+
+    <TextView
+        android:id="@+id/tv_title_voucher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/img_success"
+        android:text="@string/tv_title_voucher"
+        android:gravity="center"/>
+
+    <ImageView
+        android:id="@+id/img_success"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title_voucher"
+        app:layout_constraintStart_toStartOf="@+id/ll_amount"
+        app:layout_constraintEnd_toEndOf="@+id/ll_amount"
+        app:layout_constraintBottom_toTopOf="@id/ll_amount"
+        android:src="@drawable/img_check_ok"/>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_success">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/field_total_amount"/>
+        <TextView
+            android:id="@+id/value_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/value_amount"
+            android:gravity="right"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_payment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_amount">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/field_payment"/>
+        <TextView
+            android:id="@+id/value_payment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:gravity="right"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_installment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_payment">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/field_installment"/>
+        <TextView
+            android:id="@+id/value_installment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:gravity="right"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_rate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_installment">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/field_rate"/>
+        <TextView
+            android:id="@+id/value_rate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:gravity="right"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_rate">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/field_description"/>
+        <TextView
+            android:id="@+id/value_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:gravity="right"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <Button
+        android:id="@+id/btn_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="30dp"
+        android:text="@string/btn_end"
+        android:textColor="@android:color/white"
+        android:background="@drawable/custom_button"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
